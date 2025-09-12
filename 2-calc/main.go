@@ -81,8 +81,8 @@ func medTransactions(transactions []float64) float64 {
 	medNumber := len(transactions) / 2
 
 	if len(transactions)%2 == 0 {
-		return transactions[medNumber]
+		return (transactions[medNumber] + transactions[medNumber-1]) / 2
 	}
 
-	return (transactions[medNumber] + transactions[medNumber-1]) / 2
+	return transactions[medNumber]
 }
