@@ -10,6 +10,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"sort"
@@ -18,20 +19,28 @@ import (
 )
 
 func main() {
-	method := methodType()
-	transactions := scanTransactions()
+	for {
+		method := methodType()
+		if _, err := checkMethod(method); err != nil {
+			fmt.Println(err)
+			continue
+		}
+		transactions := scanTransactions()
 
-	switch {
-	case method == "SUM":
-		sum := sumTransactions(transactions)
-		fmt.Printf("Результат %.2f", sum)
-	case method == "AVG":
-		avg := avgTransactions(transactions)
-		fmt.Printf("Результат %.2f", avg)
-	case method == "MED":
-		med := medTransactions(transactions)
-		fmt.Printf("Результат %.2f", med)
+		switch {
+		case method == "SUM":
+			sum := sumTransactions(transactions)
+			fmt.Printf("Результат %.2f", sum)
+		case method == "AVG":
+			avg := avgTransactions(transactions)
+			fmt.Printf("Результат %.2f", avg)
+		case method == "MED":
+			med := medTransactions(transactions)
+			fmt.Printf("Результат %.2f", med)
+		}
+		break
 	}
+
 }
 
 func methodType() string {
@@ -39,6 +48,13 @@ func methodType() string {
 	fmt.Println("Введите желаемую операцию (AVG/SUM/MED):")
 	_, _ = fmt.Scan(&method)
 	return strings.ToUpper(method)
+}
+
+func checkMethod(method string) (string, error) {
+	if method != "AVG" && method != "SUM" && method != "MED" {
+		return method, errors.New("Неизвестная операция. Доступные варианты: MED/SUM, AVG")
+	}
+	return method, nil
 }
 
 func scanTransactions() []float64 {
