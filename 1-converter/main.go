@@ -6,19 +6,18 @@ import (
 	"strings"
 )
 
-const (
-	EURtoUSD = 1.08
-	USDtoEUR = 0.93
-	EURtoRUB = 100.0
-	RUBtoEUR = 0.01
-	USDtoRUB = 92.0
-	RUBtoUSD = 0.011
-)
+type CurrencyRates = map[string]float64
+
+var currencyMap = &CurrencyRates{
+	"USD": 1.0,
+	"EUR": 0.85,
+	"RUB": 83.5,
+}
 
 func main() {
 	for {
 		inputCurrency, amount, outputCurrency := clientInput()
-		result := calculateCurrency(strings.ToUpper(inputCurrency), amount, strings.ToUpper(outputCurrency))
+		result := calculateCurrency(strings.ToUpper(inputCurrency), amount, strings.ToUpper(outputCurrency), currencyMap)
 		fmt.Printf("Результат: %.2f %s\n\n", result, strings.ToUpper(outputCurrency))
 		if !checkRepeatCalculate() {
 			break
@@ -56,25 +55,8 @@ func clientInput() (string, float64, string) {
 
 }
 
-func calculateCurrency(inputCurrency string, amount float64, outputCurrency string) float64 {
-	switch {
-	case inputCurrency == "EUR" && outputCurrency == "USD":
-		return amount * EURtoUSD
-	case inputCurrency == "USD" && outputCurrency == "EUR":
-		return amount * USDtoEUR
-	case inputCurrency == "EUR" && outputCurrency == "RUB":
-		return amount * EURtoRUB
-	case inputCurrency == "RUB" && outputCurrency == "EUR":
-		return amount * RUBtoEUR
-	case inputCurrency == "USD" && outputCurrency == "RUB":
-		return amount * USDtoRUB
-	case inputCurrency == "RUB" && outputCurrency == "USD":
-		return amount * RUBtoUSD
-	case inputCurrency == outputCurrency:
-		return amount
-	default:
-		return amount
-	}
+func calculateCurrency(inputCurrency string, amount float64, outputCurrency string, m *CurrencyRates) float64 {
+	return (amount / (*m)[inputCurrency]) * (*m)[outputCurrency]
 }
 
 func checkAmount(amount float64) (float64, error) {
