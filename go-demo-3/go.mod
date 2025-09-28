@@ -1,3 +1,3 @@
-module go-demo-2/demoBookmarks
+module go-demo-3/demoBookmarks
 
 go 1.25.1
