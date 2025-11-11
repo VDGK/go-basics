@@ -11,19 +11,15 @@ import (
 )
 
 type Account struct {
-	login    string
-	password string
-	url      string
+	Login     string    `json:"login"`
+	Password  string    `json:"password"`
+	Url       string    `json:"url"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type AccountWithTimeStamp struct {
-	createdAt time.Time
-	updatedAt time.Time
-	Account
-}
-
-func (acc *Account) OutputPassword() {
-	color.New(color.FgBlue).Println(acc.login, acc.password, acc.url)
+func (acc *Account) Output() {
+	color.New(color.FgBlue).Println(acc.Login, acc.Password, acc.Url)
 }
 
 func (acc *Account) generatePassword(length int) {
@@ -31,9 +27,10 @@ func (acc *Account) generatePassword(length int) {
 	for i := range res {
 		res[i] = letterRunes[rand.IntN(len(letterRunes))]
 	}
-	acc.password = string(res)
+	acc.Password = string(res)
 }
-func NewAccountWithTimeStamp(login, password, urlString string) (*AccountWithTimeStamp, error) {
+
+func NewAccount(login, password, urlString string) (*Account, error) {
 	if login == "" {
 		return nil, errors.New("login required")
 	}
@@ -41,14 +38,12 @@ func NewAccountWithTimeStamp(login, password, urlString string) (*AccountWithTim
 	if err != nil {
 		return nil, fmt.Errorf("неверный URL-адрес %q: %w", urlString, err)
 	}
-	newAcc := &AccountWithTimeStamp{
-		createdAt: time.Now(),
-		updatedAt: time.Now(),
-		Account: Account{
-			login:    login,
-			password: password,
-			url:      urlString,
-		},
+	newAcc := &Account{
+		Login:     login,
+		Password:  password,
+		Url:       urlString,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 	if password == "" {
 		newAcc.generatePassword(20)
